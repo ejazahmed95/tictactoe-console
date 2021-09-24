@@ -1,11 +1,28 @@
 // Tictactoe.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
+#include "components/ConsoleInputReader.h"
+#include "components/Logger.h"
+#include "core/GameManager.h"
 
-#include <iostream>
+int main() {
 
-int main()
-{
-    std::cout << "Hello World!\n";
+	// Create dependencies
+	const auto logger = new Logger();
+	const auto inputReader = new ConsoleInputReader();
+
+	logger->info("Welcome to Advanced Tic Tac Toe!!");
+	logger->info("Print the");
+	auto gameExited = false;
+	while(!gameExited) {
+		int m, n, k;
+		std::cin >> m >> n >> k;
+		auto gm = new GameManager(m, n, k, inputReader, logger);
+	}
+
+	logger->info("Thank You!!");
+
+	// Cleaning up memory
+	delete logger;
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

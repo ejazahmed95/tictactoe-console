@@ -1,0 +1,15 @@
+#include "Logger.h"
+
+Logger::Logger() = default;
+
+Logger::~Logger() = default;
+
+void Logger::info(const std::string& message) {
+	std::cout << message << std::endl;
+}
+
+void Logger::error(const std::string& message) {
+	std::cout << "===========ERROR=========" << std::endl;
+	std::cout << message << std::endl;
+	std::cout << "===========+++++=========" << std::endl;
+}

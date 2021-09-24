@@ -82,7 +82,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\components\ConsoleInputReader.cpp" />
+    <ClCompile Include="src\components\Logger.cpp" />
+    <ClCompile Include="src\core\GameManager.cpp" />
+    <ClCompile Include="src\core\GameService.cpp" />
+    <ClCompile Include="src\core\Player.cpp" />
     <ClCompile Include="src\Tictactoe.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\components\ILogger.h" />
+    <ClInclude Include="src\components\ConsoleInputReader.h" />
+    <ClInclude Include="src\components\Logger.h" />
+    <ClInclude Include="src\core\GameConfig.h" />
+    <ClInclude Include="src\core\GameManager.h" />
+    <ClInclude Include="src\core\GameService.h" />
+    <ClInclude Include="src\core\Player.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
