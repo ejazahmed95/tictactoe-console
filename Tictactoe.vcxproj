@@ -97,6 +97,7 @@
     <ClInclude Include="src\core\GameManager.h" />
     <ClInclude Include="src\core\GameService.h" />
     <ClInclude Include="src\core\Player.h" />
+    <ClInclude Include="src\Tictactoe.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

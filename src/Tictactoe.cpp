@@ -3,6 +3,8 @@
 #include "components/ConsoleInputReader.h"
 #include "components/Logger.h"
 #include "core/GameManager.h"
+// #include "Tictactoe.h"
+
 
 int main() {
 
@@ -11,18 +13,26 @@ int main() {
 	const auto inputReader = new ConsoleInputReader();
 
 	logger->info("Welcome to Advanced Tic Tac Toe!!");
-	logger->info("Print the");
+	logger->info("Provide space separated values for Width, Height and WinSize");
 	auto gameExited = false;
 	while(!gameExited) {
 		int m, n, k;
 		std::cin >> m >> n >> k;
-		auto gm = new GameManager(m, n, k, inputReader, logger);
+		GameConf conf = GameConf{m,n,k,"Ejaz", "Tehas"};
+		if(!GameManager::validateConf(conf)) {
+			logger->error("Invalid inputs");
+			continue;
+		}
+		auto gm = new GameManager(GameConf{m,n,k,"Ejaz","Tehas"}, inputReader, logger);
+		gm->start();
+
+		// TODO: Ask if another game needs to be played
+		gameExited = true;
 	}
-
-	logger->info("Thank You!!");
-
+	logger->info("Thank You For Playing!!");
 	// Cleaning up memory
 	delete logger;
+	delete inputReader;
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
