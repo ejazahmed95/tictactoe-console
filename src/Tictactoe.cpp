@@ -1,9 +1,9 @@
 // Tictactoe.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
+// #include "Tictactoe.h"
 #include "components/ConsoleInputReader.h"
 #include "components/Logger.h"
 #include "core/GameManager.h"
-// #include "Tictactoe.h"
 
 
 int main() {
@@ -16,13 +16,21 @@ int main() {
 	logger->info("Provide space separated values for Width, Height and WinSize");
 	auto gameExited = false;
 	while(!gameExited) {
-		int m, n, k;
-		std::cin >> m >> n >> k;
+		std::vector<int> dimensions = inputReader->readInts();
+		if(dimensions.size() != 3) {
+			logger->error("Invalid input, please try again");
+			continue;
+		}
+		const int m = dimensions[0];
+		const int n = dimensions[1];
+		const int k = dimensions[2];
+
 		GameConf conf = GameConf{m,n,k,"Ejaz", "Tehas"};
 		if(!GameManager::validateConf(conf)) {
 			logger->error("Invalid inputs");
 			continue;
 		}
+
 		auto gm = new GameManager(GameConf{m,n,k,"Ejaz","Tehas"}, inputReader, logger);
 		gm->start();
 

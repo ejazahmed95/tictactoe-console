@@ -1,9 +1,14 @@
 #include "Player.h"
 
 MoveInfo Player::getMove() {
-	auto words = input_->readWords();
-	for(const std::string &s: words) {
-		logger_->info("INPUT:: " + s);
+	// logger_->info("Click U for undo move, and M for move");
+	// std::string move = input_->read_string();
+	while(true) {
+		auto coords = input_->readInts();
+		if (coords.size() != 2) {
+			logger_->error("invalid inputs for coordinates");
+			continue;
+		}
+		return MoveInfo{ symbol, coords[0], coords[1]};
 	}
-	return MoveInfo{ symbol, 0, 0 };
 }

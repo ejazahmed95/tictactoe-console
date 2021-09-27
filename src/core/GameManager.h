@@ -2,6 +2,7 @@
 #include "GameConfig.h"
 #include "../components/ConsoleInputReader.h"
 #include "../components/Logger.h"
+#include "../components/Grid.h"
 #include "Player.h"
 
 // delegate for handling moves from the player class
@@ -18,7 +19,8 @@ public:
 private:
 	Player* _getCurrentPlayer();
 	void _startNewTurn(Player* player);
-	void _playMove(Player* player);
+	bool _playMove(Player* player);
+	void _printBoard();
 	MatchResult _endTurn();
 
 private:
@@ -30,4 +32,5 @@ private:
 	int total_moves_;
 	int current_turn_;
 	MatchInfo info_;
+	Grid<Symbol>* grid_;
 };

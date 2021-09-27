@@ -13,11 +13,20 @@ GameManager::GameManager(GameConf conf, ConsoleInputReader* input_reader, Logger
 	state_ = GameState::INIT;
 	current_turn_ = 0;
 	info_ = MatchInfo{ p1_->name, MatchResult::UNDECIDED, "" };
+
+	// Initializing the grid
+	grid_ = new Grid<Symbol>(width_, height_);
+	for (int j = 0; j < height_; j++) {
+		for (int i = 0; i < width_; i++) {
+			grid_->setCell(Symbol::UNDEFINED, i, j);
+		}
+	}
 }
 
 GameManager::~GameManager() {
 	delete p1_;
 	delete p2_;
+	// delete grid_;
 }
 
 void GameManager::start() {
@@ -25,15 +34,18 @@ void GameManager::start() {
 		logger_->error("Invalid State Transition on game start: Current State = ");
 		return;
 	}
-	logger_->info("Game Started:: GridSize = ");
+	logger_->info("Game Started:: GridSize = " + std::to_string(width_) + " x " + std::to_string(height_));
+	_printBoard();
 
 	state_ = GameState::PLAYING;
 	while (state_ != GameState::RESULT) {
 		Player* p = _getCurrentPlayer();
 		_startNewTurn(p);
-		MoveInfo info = p->getMove();
-		_playMove(p);
+		if(!_playMove(p)) {
+			continue;
+		}
 		info_.result = _endTurn();
+
 		if(info_.result == MatchResult::WIN || info_.result == MatchResult::DRAW) {
 			state_ = GameState::RESULT;
 			if (info_.result == MatchResult::WIN) info_.winner = p->name;
@@ -58,9 +70,32 @@ void GameManager::_startNewTurn(Player* player) {
 	logger_->info(output);
 }
 
-void GameManager::_playMove(Player* player) {
+bool GameManager::_playMove(Player* player) {
 	MoveInfo move = player->getMove();
+	auto cell = grid_->getCell(move.x - 1, move.y - 1);
+	if(cell != Symbol::UNDEFINED) {
+		logger_->error("Position already marked as::" + enumToString(cell));
+		return false;
+	}
 	logger_->info("Applying move for " + player->name);
+	grid_->setCell(player->symbol, move.x - 1, move.y - 1);
+	return true;
+}
+
+void GameManager::_printBoard() {
+	char* boundary = new char[width_*3 + 1];
+	boundary[width_ * 3] = '\0';
+	memset(boundary, '=', sizeof(char) * 3 * width_);
+	logger_->info(boundary);
+	for (int j = 0; j < height_; j++) {
+		for (int i = 0; i < width_; i++) {
+			auto cell = grid_->getCell(i, j);
+			logger_->print(" " + enumToString(cell) + " ");
+		}
+		logger_->print("\n");
+	}
+	logger_->info(boundary);
+	delete[] boundary;
 }
 
 MatchResult GameManager::_endTurn() {
@@ -70,6 +105,7 @@ MatchResult GameManager::_endTurn() {
 		info_.result = MatchResult::DRAW;
 	}
 	logger_->info("Turn completed");
+	_printBoard();
 	return info_.result;
 }
 

@@ -59,6 +59,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -84,8 +85,10 @@
   <ItemGroup>
     <ClCompile Include="src\components\ConsoleInputReader.cpp" />
     <ClCompile Include="src\components\Logger.cpp" />
+    <ClCompile Include="src\core\GameConfig.cpp" />
     <ClCompile Include="src\core\GameManager.cpp" />
     <ClCompile Include="src\core\GameService.cpp" />
+    <ClCompile Include="src\components\Grid.cpp" />
     <ClCompile Include="src\core\Player.cpp" />
     <ClCompile Include="src\Tictactoe.cpp" />
   </ItemGroup>
@@ -96,6 +99,7 @@
     <ClInclude Include="src\core\GameConfig.h" />
     <ClInclude Include="src\core\GameManager.h" />
     <ClInclude Include="src\core\GameService.h" />
+    <ClInclude Include="src\components\Grid.h" />
     <ClInclude Include="src\core\Player.h" />
     <ClInclude Include="src\Tictactoe.h" />
   </ItemGroup>
