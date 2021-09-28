@@ -9,6 +9,6 @@ MoveInfo Player::getMove() {
 			logger_->error("invalid inputs for coordinates");
 			continue;
 		}
-		return MoveInfo{ symbol, coords[0], coords[1]};
+		return MoveInfo{ symbol, coords[1], coords[0]};
 	}
 }

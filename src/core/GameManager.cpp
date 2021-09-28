@@ -13,12 +13,13 @@ GameManager::GameManager(GameConf conf, ConsoleInputReader* input_reader, Logger
 	state_ = GameState::INIT;
 	current_turn_ = 0;
 	info_ = MatchInfo{ p1_->name, MatchResult::UNDECIDED, "" };
+	all_moves_ = std::vector<MoveInfo>{};
 
 	// Initializing the grid
 	grid_ = new Grid<Symbol>(width_, height_);
 	for (int j = 0; j < height_; j++) {
 		for (int i = 0; i < width_; i++) {
-			grid_->setCell(Symbol::UNDEFINED, i, j);
+			grid_->setCell(Symbol::EMPTY, i, j);
 		}
 	}
 }
@@ -26,7 +27,7 @@ GameManager::GameManager(GameConf conf, ConsoleInputReader* input_reader, Logger
 GameManager::~GameManager() {
 	delete p1_;
 	delete p2_;
-	// delete grid_;
+	delete grid_;
 }
 
 void GameManager::start() {
@@ -39,16 +40,19 @@ void GameManager::start() {
 
 	state_ = GameState::PLAYING;
 	while (state_ != GameState::RESULT) {
+		_startNewTurn();
 		Player* p = _getCurrentPlayer();
-		_startNewTurn(p);
-		if(!_playMove(p)) {
-			continue;
-		}
+		_playMove(p);
+
 		info_.result = _endTurn();
 
-		if(info_.result == MatchResult::WIN || info_.result == MatchResult::DRAW) {
+		if(info_.result == MatchResult::WIN){
 			state_ = GameState::RESULT;
-			if (info_.result == MatchResult::WIN) info_.winner = p->name;
+			info_.winner = p->name;
+			logger_->info("Match ended, winner = " + info_.winner);
+		} else if(info_.result == MatchResult::DRAW) {
+			state_ = GameState::RESULT;
+			logger_->info("Match ended in a draw");
 		}
 	}
 }
@@ -64,22 +68,43 @@ Player* GameManager::_getCurrentPlayer() {
 	else return p2_;
 }
 
-void GameManager::_startNewTurn(Player* player) {
-	char output[50];
-	sprintf_s(output, "%s, it's your turn", player->name.c_str());
-	logger_->info(output);
+
+void GameManager::_startNewTurn() {
+	while (!all_moves_.empty()) {
+		logger_->info("Press U to undo the move or any other character to start a new turn");
+		const char in = input_reader_->readChar();
+		if (in == 'u' || in == 'U') {
+			undoMove();
+		} else break;
+	}
+	Player* currentPlayer = _getCurrentPlayer();
+	logger_->info(currentPlayer->name + "'s Turn. Input space separated integers for Row and Column (Ex: 2 2)");
 }
 
-bool GameManager::_playMove(Player* player) {
-	MoveInfo move = player->getMove();
-	auto cell = grid_->getCell(move.x - 1, move.y - 1);
-	if(cell != Symbol::UNDEFINED) {
-		logger_->error("Position already marked as::" + enumToString(cell));
-		return false;
+void GameManager::_playMove(Player* player) {
+	while(true) {
+		MoveInfo move = player->getMove();
+		auto cell = grid_->getCell(move.x - 1, move.y - 1);
+		if (!grid_->isIndexValid(move.x - 1, move.y - 1) || cell != Symbol::EMPTY) {
+			logger_->error("Invalid input for position, please input again");
+			continue;
+		}
+		logger_->info("Applying move for " + player->name);
+		grid_->setCell(player->symbol, move.x - 1, move.y - 1);
+		all_moves_.push_back(move);
+		return;
 	}
-	logger_->info("Applying move for " + player->name);
-	grid_->setCell(player->symbol, move.x - 1, move.y - 1);
-	return true;
+}
+
+void GameManager::undoMove() {
+	if(all_moves_.empty()) {
+		return;
+	}
+	MoveInfo info = all_moves_.back();
+	grid_->setCell(Symbol::EMPTY, info.x - 1, info.y - 1);
+	all_moves_.pop_back();
+	current_turn_ = (current_turn_ + 1) % 2;
+	total_moves_--;
 }
 
 void GameManager::_printBoard() {
@@ -98,13 +123,41 @@ void GameManager::_printBoard() {
 	delete[] boundary;
 }
 
+int GameManager::getLargestSequence(MoveInfo move_info) const {
+	const std::vector<std::pair<int, int>> directions{
+		{1, 0}, {0, 1}, {1, 1}, {-1, 1}
+	};
+	int maxLength = 1, currLength = 1;
+	for(const auto dir: directions) {
+		currLength = 1;
+		// Loop through one direction
+		for(int x=move_info.x - 1 + dir.first, y = move_info.y - 1 + dir.second;
+			grid_->isIndexValid(x, y) && grid_->getCell(x, y) == move_info.symbol;
+			x+=dir.first, y+= dir.second) {
+			currLength++;
+		}
+
+		// Loop through opposite direction
+		for (int x = move_info.x - 1 - dir.first, y = move_info.y - 1 - dir.second;
+			grid_->isIndexValid(x, y) && grid_->getCell(x, y) == move_info.symbol;
+			x -= dir.first, y -= dir.second) {
+			currLength++;
+		}
+		maxLength = std::max(maxLength, currLength);
+	}
+	return maxLength;
+}
+
 MatchResult GameManager::_endTurn() {
 	current_turn_ = (current_turn_ + 1) % 2;
 	total_moves_++;
-	if (total_moves_ == width_ * height_ && info_.result == MatchResult::UNDECIDED) {
+	if (all_moves_.size() >= width_ * height_ && info_.result == MatchResult::UNDECIDED) {
 		info_.result = MatchResult::DRAW;
 	}
-	logger_->info("Turn completed");
+	int seq = getLargestSequence(all_moves_.back());
+	if(seq >= win_size_) {
+		info_.result = MatchResult::WIN;
+	}
 	_printBoard();
 	return info_.result;
 }

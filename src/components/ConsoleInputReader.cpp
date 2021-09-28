@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <conio.h>
 
 using std::string;
 using std::vector;
@@ -39,4 +40,9 @@ std::string ConsoleInputReader::read_string() const {
 	std::string word;
 	getline(std::cin, word);
 	return word;
+}
+
+char ConsoleInputReader::readChar() const {
+	const char ch = _getch();
+	return ch;
 }

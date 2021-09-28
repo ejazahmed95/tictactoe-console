@@ -18,13 +18,15 @@ public:
 
 private:
 	Player* _getCurrentPlayer();
-	void _startNewTurn(Player* player);
-	bool _playMove(Player* player);
+	void undoMove();
+	void _startNewTurn();
+	void _playMove(Player* player);
 	void _printBoard();
+	int getLargestSequence(MoveInfo move_info) const;
 	MatchResult _endTurn();
 
 private:
-	int width_, height_, win_size_;
+	unsigned int width_, height_, win_size_;
 	ConsoleInputReader* input_reader_;
 	Logger* logger_;
 	Player *p1_, *p2_;
@@ -33,4 +35,5 @@ private:
 	int current_turn_;
 	MatchInfo info_;
 	Grid<Symbol>* grid_;
+	std::vector<MoveInfo> all_moves_;
 };

@@ -18,7 +18,7 @@ enum class GameState {
 };
 
 enum class Symbol {
-	UNDEFINED = 0,
+	EMPTY = 0,
 	X = 1, O = 2
 };
 
@@ -39,7 +39,7 @@ struct MatchInfo {
 
 inline std::string enumToString(Symbol s) {
 	switch (s) {
-	case Symbol::UNDEFINED: return "-";
+	case Symbol::EMPTY: return "-";
 	case Symbol::X: return "X";
 	case Symbol::O: return "O";
 	default: return "UNKNOWN";
