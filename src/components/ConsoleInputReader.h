@@ -1,11 +1,12 @@
 #pragma once
 #include <string>
 #include <vector>
+#include "IInputReader.h"
 
-class ConsoleInputReader {
+class ConsoleInputReader: public IInputReader {
 public:
-	std::vector<std::string> readWords() const;
-	std::vector<int> readInts() const;
-	std::string read_string() const;
-	char readChar() const;
+	std::vector<std::string> readWords() const override;
+	std::vector<int> readInts() const override;
+	std::string read_string() const override;
+	char readChar() const override;
 };

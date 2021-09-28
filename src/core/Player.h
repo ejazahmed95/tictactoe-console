@@ -6,12 +6,12 @@
 
 class Player {
 public:
-	Player(const std::string& name, Symbol symbol, ConsoleInputReader* input_reader, Logger* logger)
+	Player(const std::string& name, Symbol symbol, IInputReader* input_reader, ILogger* logger)
 		:name(name), symbol(symbol), input_(input_reader), logger_(logger) {}
 	MoveInfo getMove();
 	const std::string name;
 	const Symbol symbol;
 private:
-	ConsoleInputReader* input_;
-	Logger* logger_;
+	IInputReader* input_;
+	ILogger* logger_;
 };

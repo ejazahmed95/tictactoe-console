@@ -1,12 +1,11 @@
 #include "GameManager.h"
 
-GameManager::GameManager(GameConf conf, ConsoleInputReader* input_reader, Logger* logger) {
+GameManager::GameManager(GameConf conf, IInputReader* input_reader, ILogger* logger) {
 	width_ = conf.width;
 	height_ = conf.height;
 	win_size_ = conf.win_size;
 	input_reader_ = input_reader;
 	logger_ = logger;
-	total_moves_ = 0;
 
 	p1_ = new Player(conf.player_one, Symbol::X, input_reader, logger);
 	p2_ = new Player(conf.player_two, Symbol::O, input_reader, logger);
@@ -104,7 +103,8 @@ void GameManager::undoMove() {
 	grid_->setCell(Symbol::EMPTY, info.x - 1, info.y - 1);
 	all_moves_.pop_back();
 	current_turn_ = (current_turn_ + 1) % 2;
-	total_moves_--;
+	logger_->info("Move Undone");
+	_printBoard();
 }
 
 void GameManager::_printBoard() {
@@ -120,6 +120,7 @@ void GameManager::_printBoard() {
 		logger_->print("\n");
 	}
 	logger_->info(boundary);
+	logger_->info("\n");
 	delete[] boundary;
 }
 
@@ -150,7 +151,6 @@ int GameManager::getLargestSequence(MoveInfo move_info) const {
 
 MatchResult GameManager::_endTurn() {
 	current_turn_ = (current_turn_ + 1) % 2;
-	total_moves_++;
 	if (all_moves_.size() >= width_ * height_ && info_.result == MatchResult::UNDECIDED) {
 		info_.result = MatchResult::DRAW;
 	}

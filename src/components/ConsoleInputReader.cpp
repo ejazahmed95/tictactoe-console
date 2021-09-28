@@ -7,6 +7,7 @@
 using std::string;
 using std::vector;
 
+// Reads a line and returns list of words
 vector<string> ConsoleInputReader::readWords() const {
 	string line;
 	getline(std::cin, line);
@@ -27,6 +28,7 @@ vector<string> ConsoleInputReader::readWords() const {
 	return words;
 }
 
+// Reads a line and returns the integer values
 vector<int> ConsoleInputReader::readInts() const {
 	vector<std::string> words = readWords();
 	vector<int> ints{};
@@ -36,12 +38,14 @@ vector<int> ConsoleInputReader::readInts() const {
 	return ints;
 }
 
+// Reads a string
 std::string ConsoleInputReader::read_string() const {
 	std::string word;
 	getline(std::cin, word);
 	return word;
 }
 
+// Reads a character; no need to press Enter
 char ConsoleInputReader::readChar() const {
 	const char ch = _getch();
 	return ch;

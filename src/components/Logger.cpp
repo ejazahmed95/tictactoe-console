@@ -2,7 +2,9 @@
 
 Logger::Logger() = default;
 
-Logger::~Logger() = default;
+Logger::~Logger() {
+
+};
 
 void Logger::info(const std::string& message) {
 	std::cout << message << std::endl;

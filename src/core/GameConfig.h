@@ -47,5 +47,4 @@ inline std::string enumToString(Symbol s) {
 };
 
 inline std::string enumToString(GameState);
-// inline std::string enumToString(Symbol);
 inline std::string enumToString(MatchResult);

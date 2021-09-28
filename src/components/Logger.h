@@ -3,10 +3,10 @@
 #include <iostream>
 #include "ILogger.h"
 
-class Logger: ILogger {
+class Logger: public ILogger {
 public:
 	Logger();
-	~Logger();
+	~Logger() override;
 	// void info(const char* message) override;
 	void print(const std::string& string) override;
 	void info(const std::string& string) override;
